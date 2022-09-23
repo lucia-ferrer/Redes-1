@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 class Adaline:
 
 
-    def __init__(self, training_csv = None, validation_csv = None, test_csv = None, tolerance = 0.0001, learning_rate = 0.0001, max_iterations = 1000):
+    def __init__(self, training_csv = None, validation_csv = None, test_csv = None, tolerance = 0.0001, learning_rate = 0.01, max_iterations = 100):
         '''Método constructor'''
 
         # Si se han introducido datos para entrenar el modelo, se separan en matriz de ejemplos y vector de salida
@@ -92,7 +92,12 @@ class Adaline:
         '''Método para calcular la predecida por la neurona'''
 
         # ∑(wi * xi) + ø
-        return np.dot(examples, weights[:-1]) + weights[-1] 
+        return np.dot(examples, weights[:-1]) + weights[-1]
+
+
+    def calcSingleOutput(self, example):
+
+        return (example * self.weights[:-1]).sum() + self.weights[-1]
 
 
     def calcMse(self, output, tags):
@@ -151,24 +156,28 @@ class Adaline:
 
         # Mientras no se hayan alcanzado las iteraciones máximas
         for i in range(self.max_iterations):
+            output_training = []
+            output_validation = []
 
-            # Se calcula la salida con el conjunto de entrenamiento
-            output_training = self.calcOutput(self.training_set, self.weights)
-            mse_training = self.calcMse(output_training, self.training_tags)
+            for line in range(len(self.training_set)):
+                # Se calcula la salida con el conjunto de entrenamiento
+                output = self.calcSingleOutput(self.training_set[line])
+                output_training.append(output)
+                self.adjustWeights(output, self.training_tags[line], self.training_set[line])
 
             # Se evalua el modelo con el conjunto de validación
-            output_validation = self.calcOutput(self.validation_set, self.weights)
+            for l in self.validation_set:
+                vout = self.calcSingleOutput(l)
+                output_validation.append(vout)
+
             mse_validation = self.calcMse(output_validation, self.validation_tags)
+            mse_training = self.calcMse(output_training, self.training_tags)
 
             # Criterio de parada, si el error de validación empieza a crecer o decrece con una tolerancia menor a la definida
             # se da por concluido el entrenamiento y se devuelve la progresión del error
             if len(info):
-                #if abs(info[-1][-1] - mse_validation) < self.tolerance:
-                if ((info[-1][-1] >= mse_validation) and abs(info[-1][-1] - mse_validation) < self.tolerance):
+                if (info[-1][-1] <= mse_validation):
                     return info
-
-            # Si no se cumple el criterio de parada, se ajustan los pesos con los datos de entrenamiento
-            self.adjustWeights(output_training, self.training_tags, self.training_set)
 
             # Se añade información sobre los errores al buffer
             info.append((mse_training, mse_validation))
@@ -178,22 +187,25 @@ class Adaline:
 
 
     def adjustWeights(self, output, tags, examples):
-        '''Método para ajustar los pesos'''
 
-        # Se calcula la variación de los pesos
-        weights_variation = self.learning_rate * (examples.T @ (tags - output))
-        bias_variation = self.learning_rate * (tags - output).sum()
+        weights_variation = self.learning_rate * examples.reshape(len(examples), 1) * (tags - output)
+        bias_variation = self.learning_rate * (tags - output)
 
-        # Se actualiza el vector de pesos
         self.weights[:-1] += weights_variation
         self.weights[-1] += bias_variation
 
 
     def testModel(self):
         '''Método para testar el modelo'''
+
+        output_test = []
+        for l in self.test_set:
+            vout = self.calcSingleOutput(l)
+            output_test.append(vout)
+
             
         #Se prueba el modelo con los datos de test
-        output_test = self.calcOutput(self.test_set, self.weights)
+        #output_test = self.calcOutput(self.test_set, self.weights)
         mse_test = self.calcMse(output_test, self.test_tags)
 
         #Se devuelve el error cuadrático medio y la salida de la predicción
@@ -204,17 +216,17 @@ class Adaline:
         '''A partir del vector de salida de trainModel se imprime una gráfica'''
 
         # Se inicializan dos vectores
-        mse_hist = []
-        mae_hist = []
+        validation_hist = []
+        training_hist = []
 
         # Se separa la matriz de entrada en dos vectores
         for i in training_info:
-            mae_hist.append(i[0])
-            mse_hist.append(i[1])
+            training_hist.append(i[0])
+            validation_hist.append(i[1])
 
         # Se crea la gráfica y se imprime
-        plt.plot(mse_hist, color = 'blue')
-        plt.plot(mae_hist, color = 'red')
+        plt.plot(validation_hist, color = 'blue')
+        plt.plot(training_hist, color = 'red')
         plt.xlabel('Iterations')
         plt.ylabel('Mean Squeared Error')
         plt.show()
@@ -230,5 +242,5 @@ if __name__ == '__main__':
     print('\nITERACIONES OPTIMAS: ', len(info))
     print(f'\nMSE TEST: {res}\n\n')
 
-    # ada.plotMse(info)
+    ada.plotMse(info)
 
