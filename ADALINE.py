@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 class Adaline:
 
 
-    def __init__(self, training_csv = None, validation_csv = None, test_csv = None, tolerance = 0.0001, learning_rate = 0.01, max_iterations = 100):
+    def __init__(self, training_csv = None, validation_csv = None, test_csv = None, tolerance = 0.0001, learning_rate = 0.01, max_iterations = 50):
         '''Método constructor'''
 
         # Si se han introducido datos para entrenar el modelo, se separan en matriz de ejemplos y vector de salida
@@ -84,7 +84,7 @@ class Adaline:
     def initWeights(self, columns):
         '''Método para inicializar un vector de pesos de la misma longitud que los atributos de entrada'''
         
-        # Posiciones 0 a n son pesos, posición n+1 es la bias  
+        # Posiciones 0 a n son pesos, posición n+1 es la bias (o umbral)  
         return np.random.rand((columns + 1), 1)
 
 
@@ -154,18 +154,22 @@ class Adaline:
         # Buffer de información para guardar la progresión del error
         info = []
 
-        # Mientras no se hayan alcanzado las iteraciones máximas
+        # Mientras no se hayan alcanzado las iteraciones máximas (máx de ciclos)
         for i in range(self.max_iterations):
             output_training = []
             output_validation = []
 
             for line in range(len(self.training_set)):
-                # Se calcula la salida con el conjunto de entrenamiento
+                # (1) Se calcula la salida con el conjunto de entrenamiento
                 output = self.calcSingleOutput(self.training_set[line])
                 output_training.append(output)
-                self.adjustWeights(output, self.training_tags[line], self.training_set[line])
 
-            # Se evalua el modelo con el conjunto de validación
+                # (2) Ajuste de pesos y umbral  iterando por cada patron (line)
+                self.adjustWeights(output, self.training_tags[line], self.training_set[line])
+            
+            # Fin de ciclo i
+
+            # (3) Se evalua el modelo con el conjunto de validación, y se guarda el error del entrenamiento.
             for l in self.validation_set:
                 vout = self.calcSingleOutput(l)
                 output_validation.append(vout)
@@ -174,7 +178,7 @@ class Adaline:
             mse_training = self.calcMse(output_training, self.training_tags)
 
             # Criterio de parada, si el error de validación empieza a crecer o decrece con una tolerancia menor a la definida
-            # se da por concluido el entrenamiento y se devuelve la progresión del error
+            # (4) se da por concluido el entrenamiento y se devuelve la progresión del error
             if len(info):
                 if (info[-1][-1] <= mse_validation):
                     return info
@@ -182,12 +186,12 @@ class Adaline:
             # Se añade información sobre los errores al buffer
             info.append((mse_training, mse_validation))
 
-        # Si se alcanzan las iteraciones máximas se devuelve la info
+        # Si se alcanzan las iteraciones/ciclos máximas se devuelve la info de los errores.
         return info
 
 
     def adjustWeights(self, output, tags, examples):
-
+        #examples --> patrones / matriz de ( columnas - 1 (salida)  X 1 )
         weights_variation = self.learning_rate * examples.reshape(len(examples), 1) * (tags - output)
         bias_variation = self.learning_rate * (tags - output)
 
