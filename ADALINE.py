@@ -88,11 +88,11 @@ class Adaline:
         return np.random.rand((columns + 1), 1)
 
 
-    def calcOutput(self, examples, weights):
+    """def calcOutput(self, examples, weights):
         '''Método para calcular la predecida por la neurona'''
 
         # ∑(wi * xi) + ø
-        return np.dot(examples, weights[:-1]) + weights[-1]
+        return np.dot(examples, weights[:-1]) + weights[-1]"""
 
 
     def calcSingleOutput(self, example):
@@ -132,7 +132,7 @@ class Adaline:
         head = '|{:^25}|{:^25}|{:^25}|'.format('CICLE', 'MEAN TRAINING ERROR', 'MEAN VALIDATION ERROR')
 
         # Si ya existe un fichero con este contenido, se elimina
-        if (os.path.exisits('error-progression.txt')):
+        if (os.path.exists('error-progression.txt')):
             os.remove('error-progression.txt')
 
         # Se escribe la cabecera
@@ -145,8 +145,7 @@ class Adaline:
             for index, row in enumerate(info):
                 file.write('|{:^25}|{:^25}|{:^25}|'.format(index + 1, row[0], row[1]) + '\n')
                 file.write(sep + '\n')
-
-
+ 
 
     def trainModel(self):
         '''Método para entrenar el modelo'''
@@ -239,10 +238,19 @@ class Adaline:
 
 if __name__ == '__main__':
 
+    # Preparación  y aprendizaje de la red
     ada = Adaline('training_set.csv', 'validation_set.csv', 'test_set.csv')
     info = ada.trainModel()
+
+    # Calcular el error sobre el conjunto de test una vez finalizado el aprendizaje.
     res, output_test = ada.testModel()
-    ada.printError(info)
+    
+    # Guardar en fichero las salidas de la red para todas las instancias de test.
+    # Guardar en fichero el modelo, es decir, los pesos y el umbral (bias) de la red una vez finalizado el aprendizaje.
+    #TODO: Incorporar la funcion que guarda ambas hecha en prueba.py
+    
+    #Impresion en la terminal  de datos 
+    ada.printError(info) 
     print('\nITERACIONES OPTIMAS: ', len(info))
     print(f'\nMSE TEST: {res}\n\n')
 
