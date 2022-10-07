@@ -212,6 +212,7 @@ class Adaline:
         mse_test = self.calcMse(output_test, self.test_tags)
 
         #Se devuelve el error cuadrático medio y la salida de la predicción
+        print('LEN : output_test', len(output_test))
         return mse_test, output_test
 
 
@@ -236,7 +237,7 @@ class Adaline:
 
 
 
-if __name__ == '__main__':
+"""if __name__ == '__main__':
 
     # Preparación  y aprendizaje de la red
     ada = Adaline('training_set.csv', 'validation_set.csv', 'test_set.csv')
@@ -245,14 +246,10 @@ if __name__ == '__main__':
     # Calcular el error sobre el conjunto de test una vez finalizado el aprendizaje.
     res, output_test = ada.testModel()
     
-    # Guardar en fichero las salidas de la red para todas las instancias de test.
-    # Guardar en fichero el modelo, es decir, los pesos y el umbral (bias) de la red una vez finalizado el aprendizaje.
-    #TODO: Incorporar la funcion que guarda ambas hecha en prueba.py
-    
     #Impresion en la terminal  de datos 
     ada.printError(info) 
     print('\nITERACIONES OPTIMAS: ', len(info))
     print(f'\nMSE TEST: {res}\n\n')
 
-    ada.plotMse(info)
+    ada.plotMse(info)"""
 
