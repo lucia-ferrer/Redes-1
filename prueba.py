@@ -50,6 +50,7 @@ def unnormalize(list_outputs, dat_origen = 'compactiv.dat', csv_test = 'test_set
     
     #desnormalizar valores del test
     array_test = np.array(df_test.iloc[:, -1])
+    print('Type OUTPTUS: {} |\t TEST: {}'.format(type(list_outputs[1]), type(array_test[1])))
     for y in array_test[:1]:
         val = y*(max_out - min_out) + min_out
         out["deseado"].append(val)
