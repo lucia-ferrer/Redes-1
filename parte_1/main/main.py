@@ -33,12 +33,6 @@ def unnormalize(list_outputs, dat_origen = './../data/compactiv.csv', csv_test =
 
     outputs = pd.DataFrame(out, columns = ['obtenido', 'deseado'])
 
-    add = 0
-    for index in range(len(out['deseado'])):
-        add += (out['obtenido'][index] - out['deseado'][index])**2
-
-    add /= len(out['deseado'])
-
     #borrar primero archivo si existe
     if (os.path.exists('./../output/output_comparison.csv')):
         os.remove('./../output/output_comparison.csv')
@@ -54,7 +48,7 @@ def saveOutput(output):
     sep = ' -----------------------------------------------------'
     head = '|{:^25}|{:^25}|'.format('OBTENIDO', 'DESEADO')
 
-    if (os.path.exists('output_comparison.txt')):
+    if (os.path.exists('./../output/output_comparison.txt')):
         os.remove('./../output/output_comparison.txt')
 
     with open('./../output/output_comparison.txt', 'a') as file:
@@ -70,7 +64,6 @@ def saveOutput(output):
 
 if __name__ == '__main__':
 
-    '''
     ada = Adaline('./../data/training_set.csv', './../data/validation_set.csv', './../data/test_set.csv')
     info = ada.trainModel()
     res, output_test = ada.testModel()
@@ -83,8 +76,13 @@ if __name__ == '__main__':
     print('\nITERACIONES OPTIMAS: ', len(info))
     print(f'\nMSE TEST: {res}\n\n')
 
-    ada.plotMse(info)'''
+    ada.plotMse(info)
+    
+    # Descomentar esta sección de codigo y comentar la anterior si
+    # se quiere cargar un modelo ya entrenado. Introducir en loadModel
+    # la ruta del modelo que se quiere cargar.
 
+    '''
     ada = Adaline('./../data/training_set.csv', './../data/validation_set.csv', './../data/test_set.csv')
     info = ada.loadModel('./../output/adaline_trained_model_1159.json')
     res, output_test = ada.testModel()
@@ -97,4 +95,4 @@ if __name__ == '__main__':
     print('\nITERACIONES OPTIMAS: ', len(info))
     print(f'\nMSE TEST: {res}\n\n')
 
-    ada.plotMse(info)
+    ada.plotMse(info)'''

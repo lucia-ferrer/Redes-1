@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 class Adaline:
 
 
-    def __init__(self, training_csv = None, validation_csv = None, test_csv = None, tolerance = 0.0001, learning_rate = 0.01, max_iterations = 50):
+    def __init__(self, training_csv = None, validation_csv = None, test_csv = None, tolerance = 0.0001, learning_rate = 0.1, max_iterations = 50):
         '''Método constructor'''
 
         # Si se han introducido datos para entrenar el modelo, se separan en matriz de ejemplos y vector de salida
