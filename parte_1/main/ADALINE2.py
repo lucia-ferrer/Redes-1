@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 class Adaline:
 
 
-    def __init__(self, training_csv = None, validation_csv = None, test_csv = None, tolerance = 0.0001, learning_rate = 0.1, max_iterations = 50):
+    def __init__(self, training_csv = None, validation_csv = None, test_csv = None, tolerance = 10**-7, learning_rate = 0.0001, max_iterations = 50):
         '''Método constructor'''
 
         # Si se han introducido datos para entrenar el modelo, se separan en matriz de ejemplos y vector de salida
@@ -183,7 +183,7 @@ class Adaline:
             # Criterio de parada, si el error de validación empieza a crecer o decrece con una tolerancia menor a la definida
             # (4) se da por concluido el entrenamiento y se devuelve la progresión del error
             if len(info):
-                if (info[-1][-1] <= mse_validation):
+                if (info[-1][-1] < mse_validation) or ((info[-1][-1] >= mse_validation) and abs(info[-1][-1] - mse_validation) < self.tolerance):
                     return info
 
             # Se añade información sobre los errores al buffer

@@ -5,7 +5,7 @@ import pandas as pd
 from ADALINE import Adaline
 
 
-def unnormalize(list_outputs, dat_origen = './../data/compactiv.csv', csv_test = './../data/test_set.csv'):
+def unnormalize(list_outputs, dat_origen = './../data/compactiv.dat', csv_test = './../data/test_set.csv'):
     """ Método paraa desnormalizar una lista de datos (list_outputs), teniendo en cuenta los 
     datos iniciales dat_origen: compactive.dat/artificialData.csv 
     datos exclusivos del test : csv_test """
@@ -17,12 +17,13 @@ def unnormalize(list_outputs, dat_origen = './../data/compactiv.csv', csv_test =
 
     #conseguir los maximos y minimos usados en la normalización
     max_out, min_out = df.iloc[:, -1].max(), df.iloc[:, -1].min()
+    print(max_out, min_out)
 
     out = {"obtenido" : [], "deseado" : []}
     
     #desnormalizar segun 
     for y in list_outputs[:-1]:
-        val = y*(max_out - min_out) + min_out
+        val = y * (max_out - min_out) + min_out
         out["obtenido"].append(val[0])
     
     #desnormalizar valores del test

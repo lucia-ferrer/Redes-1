@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 class Adaline:
     '''Clase Adaline'''
 
-    def __init__(self, training_csv = None, validation_csv = None, test_csv = None, tolerance = 10**-6, learning_rate = 0.00001, max_iterations = 500000):
+    def __init__(self, training_csv = None, validation_csv = None, test_csv = None, tolerance = 10**-7, learning_rate = 0.0001, max_iterations = 100000):
         '''Método constructor'''
 
         # Si se pasan como parámetros el los conjuntos de entrenamiento y validacion
@@ -151,6 +151,7 @@ class Adaline:
             output_validation = self.calcOutput(self.validation_set, self.weights)
             mse_validation = self.calcMse(output_validation, self.validation_tags)
 
+            
             # Si se lleva mas de una ejecucion
             if len(info):
 
@@ -173,7 +174,7 @@ class Adaline:
     def adjustWeights(self, output, tags, examples):
         '''Metodo para ajustar los pesos del modelo'''
 
-        # Se valculan las variaciones en el peso y en el bias
+        # Se calculan las variaciones en el peso y en el bias
         weights_variation = self.learning_rate * (examples.T @ (tags - output))
         bias_variation = self.learning_rate * (tags - output).sum()
 
